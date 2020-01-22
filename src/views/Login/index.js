@@ -11,7 +11,7 @@ const Login = () => {
         <Container>
             <Content contentContainerStyle={ styles.content }>
                 <Grid style={ styles.grid }>
-                    <Text style={ styles.title }>Bienvenido</Text>
+                    <Text style={ styles.title }>Bienvenid@</Text>
                     <Text style={ styles.subtitle }>Inicia sesión para continuar</Text>
                     <Button light style={ styles.googleBtn }>
                         <Image source={googleImage } style={ styles.googleIcon }/>
