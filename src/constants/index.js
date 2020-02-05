@@ -11,4 +11,19 @@ export const FONTS = {
     ROBOTO_MEDIUM_FONT: 'Roboto_medium'
 }
 
-const idOauth = "607442737024-r6ck1hss9bj21j5mif99qb6bq3t17021.apps.googleusercontent.com"
+export const GOOGLE_TYPES = {
+    SUCCESS : 'success',
+}
+
+export const STORAGE_KEYS = {
+    USER_INFO : '@user-info',
+    ACCESS_TOKEN : '@access-token'
+}
+
+export const COLORS = {
+    PRIMARY : '#512DA8',
+    PRIMARY_DARK : '#311B92',
+    SECONDARY : '#F5B72C'
+}
+
+

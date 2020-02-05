@@ -1,12 +1,23 @@
 import React from 'react';
-import { Container, Content, Text, Spinner, Grid } from 'native-base';
+import { Container, Content, Spinner } from 'native-base';
+import { ROUTES, STORAGE_KEYS } from '../../constants';
+import { getItem } from '../../utils/storage';
 import styles from './style';
-import { ROUTES } from '../../constants';
 
 export default ({ navigation }) => {
 
+    const tokenValidation = async () => {
+        const token = await getItem( STORAGE_KEYS.ACCESS_TOKEN );
+        console.log('token: ', token)
+        return token;
+    }
+
     React.useEffect( () => {
-        navigation.navigate( ROUTES.LOGIN );
+        const token = tokenValidation();
+        let route = ROUTES.LOGIN;
+
+        if( token ) route = ROUTES.HOME; 
+        navigation.navigate( route );
     });
 
     return (

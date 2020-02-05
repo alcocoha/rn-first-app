@@ -3,21 +3,39 @@ import { Container, Content, Text, Button, Grid } from 'native-base';
 import styles from './style';
 import { Image } from 'react-native';
 import * as Google from 'expo-google-app-auth';
+import { saveItem } from '../../utils/storage';
+import { STORAGE_KEYS, GOOGLE_TYPES, ROUTES } from '../../constants';
+import env from '../../../env';
 
 const googleImage = require('../../../assets/google-icon-1.png');
 
-const Login = () => {
+const Login = ({ navigation }) => {
 
     const handleLoginPress = async () => {
-        const { type, accessToken, user } = await Google.logInAsync({
-            iosClientId : '607442737024-5kqmeo6f8bmusngra5ja59bhk39l0mkp.apps.googleusercontent.com',
-            androidClientId: '607442737024-r6ck1hss9bj21j5mif99qb6bq3t17021.apps.googleusercontent.com',
-            iosStandaloneAppClientId: '607442737024-5kqmeo6f8bmusngra5ja59bhk39l0mkp.apps.googleusercontent.com',
-            androidStandaloneAppClientId: '607442737024-r6ck1hss9bj21j5mif99qb6bq3t17021.apps.googleusercontent.com',
-        });
-        console.log('type:', type)
-        console.log('accessToken:', accessToken)
-        console.log('user:', user)
+
+        try {
+            const { type, accessToken, user } = await Google.logInAsync( env() );
+            console.log('type:', type)
+            console.log('accessToken:', accessToken)
+            console.log('user:', user)
+    
+            if( type === GOOGLE_TYPES.SUCCESS ) {
+                console.log('todo correcto:');
+                const userResult = await saveItem( STORAGE_KEYS.USER_INFO, JSON.stringify( user ) );
+                const tokenResult = await saveItem( STORAGE_KEYS.ACCESS_TOKEN, JSON.stringify( accessToken ) );
+                console.log('userResult', userResult)
+                console.log('tokenResult', tokenResult)
+
+                if( userResult && tokenResult ) {
+                    navigation.navigate( ROUTES.HOME );
+                } else {
+                    console.error( 'error al iniciar sesión' );
+                }
+            }
+        } catch (error) {
+            console.error(error);
+        }
+
     }
 
     return (

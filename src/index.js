@@ -7,7 +7,7 @@ import Store from './redux/store';
 import * as Font from 'expo-font';
 import { Spinner } from 'native-base';
 
-import { FONTS } from './constants'
+import { FONTS } from './constants';
 
 const store = Store();
 const ROBOTO = require('../node_modules/native-base/Fonts/Roboto.ttf');
