@@ -11,6 +11,19 @@ const SearchComponent = () => {
     const [ adults, setAdults ] = useState("0");
     const [ children, setChildren] = useState("0");
 
+    const searchButtonIsDisabled = () => {
+        console.log('destinationPlace', destinationPlace)
+        console.log('fooo -->', originPlace, destinationPlace, outboundDate, inboundDate, adults)
+        if( !originPlace ||
+            !destinationPlace ||
+            !outboundDate ||
+            !inboundDate ||
+            !adults){
+                return true;
+        }
+        return false;
+    }
+
     return (
         <Form style={ styles.form }>
             <Item>
@@ -22,12 +35,12 @@ const SearchComponent = () => {
                 />
             </Item>
             <Item>
-                <Icon
-                    name="ios-airplane"
+                <Icon name="ios-airplane"/>
+                <Input
+                    placeholder="Destino"
                     value={ destinationPlace }
                     onChangeText={ setDestinationPlace }
                 />
-                <Input placeholder="Destino" />
             </Item>
             <Item style={ styles.datesContainer }>
                 <Icon ios="ios-calendar" android="md-calendar" />
@@ -66,7 +79,10 @@ const SearchComponent = () => {
                     <Picker.Item label="4" value="4" />
                 </Picker>
             </Item>
-            <Button style={ styles.button } disabled={true}>
+            <Button style={ styles.button } disabled={ searchButtonIsDisabled() }
+            onPress={ () => {
+                console.log('bar');
+            }}>
                 <Text>Buscar</Text>
                 <Icon name="search" style={ styles.buttonIcon } />
             </Button>
