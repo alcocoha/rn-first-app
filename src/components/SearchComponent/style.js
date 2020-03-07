@@ -21,5 +21,10 @@ export default StyleSheet.create({
     },
     buttonIcon: {
         marginLeft: 0
+    },
+    clearButton: {
+        color: 'black',
+        marginLeft: 0,
+        paddingLeft: 0
     }
 });
