@@ -10,7 +10,7 @@ import { STORAGE_KEYS } from '../../constants';
 import styles from './style';
 import genericStyles from '../../styles';
 
-const Home = () => {
+const Home = ({ navigation }) => {
 
     const [ userData, setUserData ] = React.useState( {} );
 
@@ -31,7 +31,7 @@ const Home = () => {
             <Header imageUri={ userData.photoUrl }/>
             <Content contentContainerStyle={ genericStyles.centerContent }>
                 <Grid contentContainerStyle={ genericStyles.centerGrid }>
-                    <SearchComponent />
+                    <SearchComponent navigation={ navigation }/>
                 </Grid>
             </Content>
         </Container>

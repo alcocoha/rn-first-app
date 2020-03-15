@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
 import { View, Platform } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Form, Item, Input, Icon, Picker, Button, Text } from 'native-base';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import styles from './style';
+import { ROUTES } from '../../constants';
 
 import { getLocations } from '../../redux/actions/itineraries';
+import FixedList from '../../components/FixedList';
 
-const SearchComponent = () => {
+const SearchComponent = props => {
+
+    console.log('props-->', props)
+    const { navigation } = props;
 
     const dispatch = useDispatch();
+    const places = useSelector( state => state.itineraries.places );
 
     const [ originPlace, setOriginPlace ] = useState('');
     const [ destinationPlace, setDestinationPlace ] = useState('');
@@ -22,6 +28,9 @@ const SearchComponent = () => {
     const [date, setDate] = useState(new Date());
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
+
+    const [showOriginPlaceList, setShowOriginPlaceList] = useState( false );
+    const [showDestinationPlaceList, setDestinationOriginPlaceList] = useState( false );
 
 
     const onChange = (event, selectedDate) => {
@@ -67,23 +76,43 @@ const SearchComponent = () => {
     }
 
     const handleSearch = () => {
-        dispatch( getLocations() );
+        navigation.navigate( ROUTES.RESULTS, {
+            originPlace,
+            destinationPlace,
+            outboundDate,
+            inboundDate,
+            adults,
+            children
+        } )
     }
     
     const handleSearchOrigin = ({ nativeEvent }) => {
         if(originPlace.length > 3){
-            console.log('Dispara la accion')
-            console.log('handleSearchOrigin-->nativeEvent', nativeEvent)
             dispatch( getLocations(originPlace) );
+            setShowOriginPlaceList(true);
+        } else {
+            setShowOriginPlaceList(false);
         }
     }
     const handleSearchDestination = ({ nativeEvent }) => {
         if(destinationPlace.length > 3){
-            console.log('Dispara la accion')
-            console.log('handleSearchDestination-->nativeEvent', nativeEvent)
             dispatch( getLocations(destinationPlace) );
+            setDestinationOriginPlaceList(true);
+        } else {
+            setDestinationOriginPlaceList(false);
         }
     }
+
+    const handleOriginPlacePress = place => {
+        setOriginPlace( place.PlaceName );
+        setShowOriginPlaceList(false);
+    }
+    
+    const handleDestinationPlacePress = place => {
+        setDestinationPlace( place.PlaceName );
+        setDestinationOriginPlaceList(false);
+    }
+
     return (
         <Form style={ styles.form }>
             <View>
@@ -96,9 +125,11 @@ const SearchComponent = () => {
                         is24Hour={true}
                         display="default"
                         onChange={onChange}
+                        minimunDate = { new Date() }
                     />
                 )}
             </View>
+
             <Item>
                 <Icon name="ios-home" />
                 <Input
@@ -108,6 +139,14 @@ const SearchComponent = () => {
                     onKeyPress={ handleSearchOrigin }
                 />
             </Item>
+            {
+                showOriginPlaceList && 
+                    <FixedList
+                        places={ places }
+                        containerStyle={{ top: 40 }}
+                        handlerPress={ handleOriginPlacePress }
+                    />
+            }
             <Item>
                 <Icon name="ios-airplane"/>
                 <Input
@@ -117,6 +156,15 @@ const SearchComponent = () => {
                     onKeyPress={ handleSearchDestination }
                 />
             </Item>
+            {
+                showDestinationPlaceList &&
+                    <FixedList
+                        places={ places }
+                        containerStyle={{ top: 100 }}
+                        handlerPress={ handleDestinationPlacePress }
+                    />
+            }
+
             <Item style={ styles.datesContainer }>
                 <Button
                     transparent={true}
@@ -160,13 +208,15 @@ const SearchComponent = () => {
                     <Picker.Item label="4" value="4" />
                 </Picker>
             </Item>
-            <Button
-            style={ styles.button }
-            disabled={ searchButtonIsDisabled() }
-            onPress={ handleSearch }>
-                <Text>Buscar</Text>
-                <Icon name="search" style={ styles.buttonIcon } />
-            </Button>
+            <Item>
+                <Button
+                style={ styles.button }
+                disabled={ searchButtonIsDisabled() }
+                onPress={ handleSearch }>
+                    <Text>Buscar</Text>
+                    <Icon name="search" style={ styles.buttonIcon } />
+                </Button>
+            </Item>
         </Form>
     );
 };

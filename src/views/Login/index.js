@@ -15,16 +15,10 @@ const Login = ({ navigation }) => {
 
         try {
             const { type, accessToken, user } = await Google.logInAsync( env() );
-            console.log('type:', type)
-            console.log('accessToken:', accessToken)
-            console.log('user:', user)
     
             if( type === GOOGLE_TYPES.SUCCESS ) {
-                console.log('todo correcto:');
                 const userResult = await saveItem( STORAGE_KEYS.USER_INFO, JSON.stringify( user ) );
                 const tokenResult = await saveItem( STORAGE_KEYS.ACCESS_TOKEN, JSON.stringify( accessToken ) );
-                console.log('userResult', userResult)
-                console.log('tokenResult', tokenResult)
 
                 if( userResult && tokenResult ) {
                     navigation.navigate( ROUTES.HOME );

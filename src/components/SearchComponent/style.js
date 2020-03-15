@@ -15,6 +15,7 @@ export default StyleSheet.create({
         justifyContent: 'space-between'
     },
     button: {
+        width: '100%',
         marginTop: 50,
         backgroundColor: COLORS.SECONDARY,
         justifyContent: 'center'
