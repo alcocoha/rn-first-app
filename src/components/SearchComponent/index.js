@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
 import { View, Platform } from 'react-native';
+import { useDispatch } from 'react-redux';
 import { Form, Item, Input, Icon, Picker, Button, Text } from 'native-base';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import styles from './style';
 
+import { getLocations } from '../../redux/actions/itineraries';
+
 const SearchComponent = () => {
+
+    const dispatch = useDispatch();
 
     const [ originPlace, setOriginPlace ] = useState('');
     const [ destinationPlace, setDestinationPlace ] = useState('');
@@ -14,27 +19,25 @@ const SearchComponent = () => {
     const [ adults, setAdults ] = useState("0");
     const [ children, setChildren] = useState("0");
 
-
     const [date, setDate] = useState(new Date());
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
 
+
     const onChange = (event, selectedDate) => {
-        console.log('event--->', event, selectedDate)
         if(show){
             const currentDate = selectedDate || date;
             const showActive = Platform.OS === 'ios' ? true : false;
+            const date = currentDate;
+            const realTime = `${date.getFullYear()}-${ date.getMonth() + 1 }-${date.getDate()}`;
+
             if( flight === 'leave' ){
-                const foo = event.nativeEvent.timestamp;
-                console.log('foo---->', foo)
-                console.log('currentDate------>: ', typeof currentDate, currentDate)
-                console.log('currentDate 2------>: ', new Date(foo).getDay(), new Date(foo).getMonth(), new Date(foo).getFullYear() )
-                // setOutboundDate(currentDate);
+                setOutboundDate( realTime );
             } else {
-                // setInboundDate(currentDate);
+                setInboundDate( realTime );
             }
             setShow( showActive );
-            setDate(currentDate);
+            setDate( currentDate );
         }
     };
 
@@ -63,10 +66,27 @@ const SearchComponent = () => {
         return false;
     }
 
+    const handleSearch = () => {
+        dispatch( getLocations() );
+    }
+    
+    const handleSearchOrigin = ({ nativeEvent }) => {
+        if(originPlace.length > 3){
+            console.log('Dispara la accion')
+            console.log('handleSearchOrigin-->nativeEvent', nativeEvent)
+            dispatch( getLocations(originPlace) );
+        }
+    }
+    const handleSearchDestination = ({ nativeEvent }) => {
+        if(destinationPlace.length > 3){
+            console.log('Dispara la accion')
+            console.log('handleSearchDestination-->nativeEvent', nativeEvent)
+            dispatch( getLocations(destinationPlace) );
+        }
+    }
     return (
         <Form style={ styles.form }>
             <View>
-                { console.log('<---------show-------->', show)}
                 {show && (
                     <DateTimePicker
                         testID="foo"
@@ -85,6 +105,7 @@ const SearchComponent = () => {
                     placeholder="Origen"
                     value={ originPlace }
                     onChangeText={ setOriginPlace }
+                    onKeyPress={ handleSearchOrigin }
                 />
             </Item>
             <Item>
@@ -93,6 +114,7 @@ const SearchComponent = () => {
                     placeholder="Destino"
                     value={ destinationPlace }
                     onChangeText={ setDestinationPlace }
+                    onKeyPress={ handleSearchDestination }
                 />
             </Item>
             <Item style={ styles.datesContainer }>
@@ -117,7 +139,7 @@ const SearchComponent = () => {
                 <Icon name="person"/>
                 <Picker
                     selectedValue={ adults }
-                    onValueChange={ setAdults }
+                    onValueChange={ e => setAdults(e) }
                 >
                     <Picker.Item label="Adultos" value="0" />
                     <Picker.Item label="1" value="1" />
@@ -129,7 +151,7 @@ const SearchComponent = () => {
                 <Icon name="person"/>
                 <Picker
                     selectedValue={ children }
-                    onValueChange={ setChildren }
+                    onValueChange={ e => setChildren(e) }
                 >
                     <Picker.Item label="Niños" value="0" />
                     <Picker.Item label="1" value="1" />
@@ -138,10 +160,10 @@ const SearchComponent = () => {
                     <Picker.Item label="4" value="4" />
                 </Picker>
             </Item>
-            <Button style={ styles.button } disabled={ searchButtonIsDisabled() }
-            onPress={ () => {
-                console.log('bar');
-            }}>
+            <Button
+            style={ styles.button }
+            disabled={ searchButtonIsDisabled() }
+            onPress={ handleSearch }>
                 <Text>Buscar</Text>
                 <Icon name="search" style={ styles.buttonIcon } />
             </Button>
